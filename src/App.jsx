@@ -1,19 +1,34 @@
 import React, { useEffect, useState } from "react";
 
-import { useGetAllTodoQuery } from "./queries/todos.querries";
+import {
+  useGetAllTodoQuery,
+  useGetSingleTodoQuery,
+} from "./queries/todos.querries";
 import { isPending } from "@reduxjs/toolkit";
 
 const App = () => {
+  const [selectTodo, setSelectedTodo] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const {
     data: todoData,
     isPending: isTodoPending,
     isError: isTodoError,
   } = useGetAllTodoQuery();
 
+  const {
+    data: singleTodo,
+    isPending: isSinglePending,
+    isError: isSingleError,
+  } = useGetSingleTodoQuery(selectTodo);
+
+  const selectSingleTodo = (todo) => {
+    setSelectedTodo(todo.id);
+    setIsModalOpen(true);
+  };
+
   return (
     <>
-      {/* <h1>App</h1> */}
-
       {isTodoPending ? (
         <div className="flex justify-center items-center min-h-[60vh]">
           Loading...
@@ -30,7 +45,10 @@ const App = () => {
                 key={todo.id}
                 className="border border-slate-300 rounded-lg p-4"
               >
-                <div className="flex items-center justify-between">
+                <div
+                  className="flex items-center justify-between"
+                  onClick={() => selectSingleTodo(todo)}
+                >
                   <h3 className="text-xl md:max-w-50 max-w-40 truncate">
                     {todo.title}
                   </h3>
@@ -43,6 +61,27 @@ const App = () => {
               </li>
             ))}
           </ul>
+
+          {isModalOpen && (
+            <div
+              className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+              onClick={() => setIsModalOpen(false)}
+            >
+              <div
+                className="bg-white rounded-lg p-6 max-w-md w-full mx-4"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {isSinglePending ? (
+                  "Loading..."
+                ) : (
+                  <>
+                    <h2 className="text-xl font-semibold mb-2">{singleTodo?.title}</h2>
+                    <p>{singleTodo?.completed ? "Done" : "Not done"}</p>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
         </>
       )}
     </>

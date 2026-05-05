@@ -25,12 +25,12 @@ export const useGetSingleTodoQuery = (resourceId) => {
     retry: false,
     refetchOnWindowFocus: false,
     placeholderData: keepPreviousData,
-    resourceId: !!resourceId,
+    enabled: !!resourceId,
 
     queryFn: async () => {
       const res = await API.private.getSingleTodos(resourceId);
 
-      if (res) return res;
+      if (res) return res.data;
       throw new Error("Failed to load single todo data!");
     },
   });
