@@ -7,15 +7,31 @@ export const useGetAllTodoQuery = (resourceId) => {
     queryKey: ["todos"],
     retry: false,
     refetchOnWindowFocus: false,
-    resourceId: !!resourceId,
     placeholderData: keepPreviousData,
 
     queryFn: async () => {
-      const res = API.private.getAllTodos(resourceId);
+      const res = await API.private.getAllTodos();
       console.log(res?.data);
 
+      if (res) return res.data;
+      throw new Error("Failed to load todos data!");
+    },
+  });
+};
+
+export const useGetSingleTodoQuery = (resourceId) => {
+  return useQuery({
+    queryKey: ["todo", resourceId],
+    retry: false,
+    refetchOnWindowFocus: false,
+    placeholderData: keepPreviousData,
+    resourceId: !!resourceId,
+
+    queryFn: async () => {
+      const res = await API.private.getSingleTodos(resourceId);
+
       if (res) return res;
-      throw new Error("Failed to load call history");
+      throw new Error("Failed to load single todo data!");
     },
   });
 };
