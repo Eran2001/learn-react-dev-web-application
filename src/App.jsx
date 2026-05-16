@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, lazy } from "react";
 
 import {
   useGetAllTodoQuery,
   useGetSingleTodoQuery,
 } from "./queries/todos.querries";
 import { isPending } from "@reduxjs/toolkit";
+
+const Dashboard = lazy(() => import("./pages/dashboard"));
 
 const App = () => {
   const [selectTodo, setSelectedTodo] = useState(null);
@@ -29,6 +31,7 @@ const App = () => {
 
   return (
     <>
+      <Dashboard />
       {isTodoPending ? (
         <div className="flex justify-center items-center min-h-[60vh]">
           Loading...
@@ -75,7 +78,9 @@ const App = () => {
                   "Loading..."
                 ) : (
                   <>
-                    <h2 className="text-xl font-semibold mb-2">{singleTodo?.title}</h2>
+                    <h2 className="text-xl font-semibold mb-2">
+                      {singleTodo?.title}
+                    </h2>
                     <p>{singleTodo?.completed ? "Done" : "Not done"}</p>
                   </>
                 )}
